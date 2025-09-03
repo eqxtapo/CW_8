@@ -54,8 +54,6 @@ class Habit(models.Model):
         **NULLABLE, verbose_name="Время на выполнение (в секундах)"
     )
 
-
-
     class Meta:
         verbose_name = "Привычка"
         verbose_name_plural = "Привычки"

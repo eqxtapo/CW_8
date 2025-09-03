@@ -91,9 +91,7 @@ class HabitTestCase(APITestCase):
     def test_habit_list_published(self):
         """Список опубликованных привычек"""
         url = reverse("habit:published")
-        not_published_habit = Habit.objects.create(
-            action="почистить зубы в 9 вечера", user=self.user, is_published=False
-        )
+
         response = self.client.get(url)
         data = response.json()
         print(data)
