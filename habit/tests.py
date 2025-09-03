@@ -11,7 +11,9 @@ class HabitTestCase(APITestCase):
 
     def setUp(self):
         self.user = User.objects.create(email="test@mail.com")
-        self.habit = Habit.objects.create(action="прогулка с собакой в 7 утра", user=self.user)
+        self.habit = Habit.objects.create(
+            action="прогулка с собакой в 7 утра", user=self.user
+        )
         self.client.force_authenticate(user=self.user)
 
     def test_habit_retrieve(self):

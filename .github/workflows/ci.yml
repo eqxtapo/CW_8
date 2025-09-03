@@ -57,26 +57,25 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Auto-fix formatting issues
+    - name: Set up PostgreSQL
       run: |
-        black . --exclude "migrations/" || true
-        isort . --profile black || true
-        flake8 . --max-line-length=88 --extend-ignore=E501,F401 --exclude=migrations/ || true
-
-    - name: Run linting
+        sudo apt-get update
+        sudo apt-get install -y postgresql-client
+        sudo service postgresql start
+        sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'rest_user_password';"
+        sudo -u postgres psql -c "CREATE DATABASE restdatabase;"
+        sudo -u postgres psql -c "CREATE ROLE runner WITH LOGIN PASSWORD 'rest_user_password';"
+        sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE restdatabase TO runner;"
+        sudo -u postgres psql -c "GRANT CREATE ON SCHEMA public TO runner;"
+        echo "DATABASE_URL=postgres://runner:rest_user_password@localhost/restdatabase" >> $GITHUB_ENV
+    - name: Run migrate
       run: |
-        flake8 .
-        black --check .
-        isort --check-only .
-
+        export SECRET_KEY="${{ secrets.SECRET_KEY }}"
+        python manage.py migrate
     - name: Run tests
-      env:
-        DATABASE_URL: postgresql://test_user:test_password@localhost:5432/test_db
-        REDIS_URL: redis://localhost:6379/0
-        SECRET_KEY: test-secret-key
-        DEBUG: 1
       run: |
-        poetry run python manage.py test --noinput
+        export SECRET_KEY="${{ secrets.SECRET_KEY }}"
+        python manage.py test
 
   build:
     needs: test
