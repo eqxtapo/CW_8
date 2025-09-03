@@ -2,7 +2,7 @@ import os
 from datetime import timedelta
 from pathlib import Path
 import sys
-
+from pathlib import Path
 
 from dotenv import load_dotenv
 
@@ -84,7 +84,7 @@ REST_FRAMEWORK = {
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        'ENGINE': 'django.db.backends.postgresql',
         "NAME": os.getenv("POSTGRES_DB"),
         "USER": os.getenv("POSTGRES_USER"),
         "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
