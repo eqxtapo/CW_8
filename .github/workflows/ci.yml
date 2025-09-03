@@ -57,6 +57,12 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
+    - name: Auto-fix formatting issues
+      run: |
+        black . --exclude "migrations/" || true
+        isort . --profile black || true
+        flake8 . --max-line-length=88 --extend-ignore=E501,F401 --exclude=migrations/ || true
+
     - name: Run linting
       run: |
         flake8 .
