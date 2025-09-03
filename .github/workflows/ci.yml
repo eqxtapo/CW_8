@@ -70,6 +70,64 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
+    - name: Debug - Check current directory and settings
+      run: |
+          echo "Current directory:"
+          pwd
+          echo "Files in directory:"
+          ls -la
+          echo "Settings file content (DATABASES section):"
+          if [ -f "CW_8/settings.py" ]; then
+            grep -A 15 "DATABASES" CW_8/settings.py || echo "DATABASES section not found"
+          else
+            echo "CW_8/settings.py not found!"
+            find . -name "settings.py" -type f
+          fi
+
+    - name: Debug - Check PostgreSQL connection
+      run: |
+        echo "Testing PostgreSQL connection..."
+        which psql || echo "psql not installed"
+        pg_isready -h localhost -p 5432 || echo "pg_isready failed"
+        PGPASSWORD=test_password psql -h localhost -U test_user -d test_db -c "SELECT version();" || echo "Connection failed"
+        echo "Exit code: $?"
+
+    - name: Debug - Check environment variables
+      run: |
+        echo "Environment variables:"
+        echo "DB_HOST: $DB_HOST"
+        echo "DB_PORT: $DB_PORT"
+        echo "POSTGRES_DB: $POSTGRES_DB"
+        echo "POSTGRES_USER: $POSTGRES_USER"
+        echo "POSTGRES_PASSWORD: $POSTGRES_PASSWORD"
+        echo "SECRET_KEY: $SECRET_KEY"
+
+    - name: Debug - Check Django database configuration
+      run: |
+        python -c "
+        import os
+        os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'CW_8.settings')
+        try:
+            from django.conf import settings
+            from django import setup
+            setup()
+            print('Database settings:', settings.DATABASES['default'])
+            print('ENGINE:', settings.DATABASES['default']['ENGINE'])
+            print('HOST:', settings.DATABASES['default'].get('HOST', 'NOT SET'))
+            print('PORT:', settings.DATABASES['default'].get('PORT', 'NOT SET'))
+        except Exception as e:
+            print('Error loading settings:', e)
+            import traceback
+            traceback.print_exc()
+        "
+
+    - name: Check PostgreSQL service status
+      run: |
+        echo "Docker containers:"
+        docker ps
+        echo "PostgreSQL container logs:"
+        docker logs $(docker ps -q --filter 'ancestor=postgres:13') 2>/dev/null || echo "No PostgreSQL container found"
+
     - name: Wait for PostgreSQL
       run: |
         timeout 30s bash -c 'until pg_isready -h localhost -p 5432; do sleep 1; done'
