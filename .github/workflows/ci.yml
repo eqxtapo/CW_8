@@ -77,13 +77,14 @@ jobs:
       - name: Create .env file
         run: |
           echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
-          echo "SECRET_KEY=${{ secrets.POSTGRES_DEBUG }}" >> .env
-          echo "SECRET_KEY=${{ secrets.POSTGRES_NAME }}" >> .env
-          echo "SECRET_KEY=${{ secrets.POSTGRES_USER }}" >> .env
-          echo "SECRET_KEY=${{ secrets.POSTGRES_PASSWORD }}" >> .env
-          echo "SECRET_KEY=${{ secrets.POSTGRES_HOST }}" >> .env
-          echo "SECRET_KEY=${{ secrets.POSTGRES_PORT }}" >> .env
-          echo "SECRET_KEY=${{ secrets.BOT_TOKEN }}" >> .env
+          echo "DEBUG=${{ secrets.DEBUG }}" >> .env
+          echo "DB_NAME=${{ secrets.POSTGRES_DB }}" >> .env
+          echo "DB_USER=${{ secrets.POSTGRES_USER }}" >> .env
+          echo "DB_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env
+          echo "DB_HOST=${{ secrets.POSTGRES_HOST }}" >> .env
+          echo "DB_PORT=${{ secrets.POSTGRES_PORT }}" >> .env
+          echo "BOT_TOKEN=${{ secrets.BOT_TOKEN }}" >> .env
+          echo "ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }}" >> .env
       - name: Log in to Docker Hub
         run: echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
 
@@ -136,4 +137,10 @@ jobs:
           
           docker-compose pull
           docker-compose up -d --remove-orphans
+          
+          sleep 10
+          echo "Checking PostgreSQL container status:"
+          docker ps -a
+          echo "PostgreSQL logs:"
+          docker logs postgres || true
           EOF
