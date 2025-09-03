@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   db:
-    image: postgres:13
+    image: postgres:14
     container_name: cw8_postgres
     environment:
       POSTGRES_DB: ${DB_NAME}
