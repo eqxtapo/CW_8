@@ -43,20 +43,25 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+
     - name: Set up PostgreSQL
       run: |
         sudo apt-get update
         sudo apt-get install -y postgresql-client
         sudo service postgresql start
-        sudo -u postgres psql -c "CREATE USER runner WITH PASSWORD 'rest_user_password';"
+        sudo -u postgres psql -c "CREATE USER runner WITH SUPERUSER PASSWORD 'rest_user_password';"
         sudo -u postgres psql -c "CREATE DATABASE restdatabase OWNER runner;"
         sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE restdatabase TO runner;"
-        sudo -u postgres psql -c "ALTER USER runner CREATEDB;"
+        sudo -u postgres psql -d restdatabase -c "GRANT CREATE ON SCHEMA public TO runner;"
+        sudo -u postgres psql -d restdatabase -c "GRANT ALL ON SCHEMA public TO runner;"
+
         echo "DATABASE_URL=postgresql://runner:rest_user_password@localhost:5432/restdatabase" >> $GITHUB_ENV
+
     - name: Run migrate
       run: |
         export SECRET_KEY="${{ secrets.SECRET_KEY }}"
         python manage.py migrate
+
     - name: Run tests
       run: |
         export SECRET_KEY="${{ secrets.SECRET_KEY }}"
