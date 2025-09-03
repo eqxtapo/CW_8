@@ -13,7 +13,8 @@ RUN pip install poetry
 WORKDIR /app
 
 # Копирование файлов зависимостей
-COPY pyproject.toml poetry.lock* ./
+COPY requirements.txt ./
+RUN pip install -r requirements.txt
 
 # Установка зависимостей
 RUN poetry config virtualenvs.create false && \
