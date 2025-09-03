@@ -48,12 +48,11 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y postgresql-client
         sudo service postgresql start
-        sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'rest_user_password';"
-        sudo -u postgres psql -c "CREATE DATABASE restdatabase;"
-        sudo -u postgres psql -c "CREATE ROLE runner WITH LOGIN PASSWORD 'rest_user_password';"
+        sudo -u postgres psql -c "CREATE USER runner WITH PASSWORD 'rest_user_password';"
+        sudo -u postgres psql -c "CREATE DATABASE restdatabase OWNER runner;"
         sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE restdatabase TO runner;"
-        sudo -u postgres psql -c "GRANT CREATE ON SCHEMA public TO runner;"
-        echo "DATABASE_URL=postgres://runner:rest_user_password@localhost/restdatabase" >> $GITHUB_ENV
+        sudo -u postgres psql -c "ALTER USER runner CREATEDB;"
+        echo "DATABASE_URL=postgresql://runner:rest_user_password@localhost:5432/restdatabase" >> $GITHUB_ENV
     - name: Run migrate
       run: |
         export SECRET_KEY="${{ secrets.SECRET_KEY }}"
