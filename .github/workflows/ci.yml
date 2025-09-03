@@ -105,30 +105,34 @@ jobs:
 
       - name: Deploy to Server
         run: |
-          ssh -v -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+          ssh -v -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
           cd
-          sudo chown -R ${{ secrets.SSH_USER }}:${{ secrets.SSH_USER }} CourseWork_8
+          sudo chown -R $(whoami):$(whoami) CW_8
           rm -rf CourseWork_8/
-          git clone git@github.com:Vitaliy-Avdoshkin/CourseWork_8.git
-          cd CourseWork_8
+          git clone git@github.com:eqxtapo/CW_8.git
+          cd CW_8
           git fetch --all
-          git switch feature/cw_9 
-          echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
-          echo "SECRET_KEY=${{ secrets.POSTGRES_DEBUG }}" >> .env
-          echo "SECRET_KEY=${{ secrets.POSTGRES_NAME }}" >> .env
-          echo "SECRET_KEY=${{ secrets.POSTGRES_USER }}" >> .env
-          echo "SECRET_KEY=${{ secrets.POSTGRES_PASSWORD }}" >> .env
-          echo "SECRET_KEY=${{ secrets.POSTGRES_HOST }}" >> .env
-          echo "SECRET_KEY=${{ secrets.POSTGRES_PORT }}" >> .env
-          echo "SECRET_KEY=${{ secrets.BOT_TOKEN }}" >> .env
+          git switch feature/CW_9 
+          
+          
+          cat > .env << 'ENV_EOF'
+          SECRET_KEY=${{ secrets.SECRET_KEY }}
+          DB_HOST=${{ secrets.DB_HOST }}
+          DB_PORT=${{ secrets.DB_PORT }}
+          DB_NAME=${{ secrets.POSTGRES_DB }}
+          DB_USER=${{ secrets.POSTGRES_USER }}
+          DB_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+          DEBUG=False
+          ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }}
+          ENV_EOF
           
           docker-compose down          
           docker system prune -af 
           docker image prune -af
           docker volume prune -af
           
-          sudo kill -9 $(sudo lsof -t -i :80)
-          sudo kill -9 $(sudo lsof -t -i :8080)
+          sudo kill -9 $(sudo lsof -t -i:80) 2>/dev/null || true
+          sudo kill -9 $(sudo lsof -t -i:8080) 2>/dev/null || true
           
           docker-compose pull
           docker-compose up -d --remove-orphans
