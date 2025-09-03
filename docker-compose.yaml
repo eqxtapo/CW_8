@@ -44,7 +44,7 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_HOST=db
+      - POSTGRES_HOST=cw8_postgres
       - REDIS_URL=redis://redis:6379/0
     ports:
       - "8000:8000"
