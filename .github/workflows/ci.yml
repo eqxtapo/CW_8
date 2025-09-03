@@ -59,9 +59,9 @@ jobs:
 
     - name: Run linting
       run: |
-        poetry run flake8 .
-        poetry run black --check .
-        poetry run isort --check-only .
+        flake8 .
+        black --check .
+        isort --check-only .
 
     - name: Run tests
       env:
