@@ -17,8 +17,7 @@ COPY requirements.txt ./
 RUN pip install -r requirements.txt
 
 # Установка зависимостей
-RUN poetry config virtualenvs.create false && \
-    poetry install --no-dev --no-interaction --no-ansi
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Копирование исходного кода
 COPY . .
