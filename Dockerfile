@@ -22,9 +22,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Копирование исходного кода
 COPY . .
 
-# Сборка статических файлов
-RUN python manage.py collectstatic --noinput
-
 # Порт для приложения
 EXPOSE 8000
 
