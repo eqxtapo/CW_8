@@ -44,10 +44,22 @@ jobs:
         python-version: '3.11'
 
 
+    - name: Install Poetry
+      uses: abatilo/actions-poetry@v2
+      with:
+        poetry-version: '2.1.4'
+
+    - name: Load cached Poetry virtualenv
+      uses: actions/cache@v3
+      id: cache-poetry
+      with:
+        path: ~/.cache/pypoetry/virtualenvs
+        key: poetry-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
+        restore-keys: |
+          poetry-${{ runner.os }}-
+
     - name: Install dependencies
-      run: |
-        cd /home/runner/work/CW_8/CW_8
-        poetry install --no-root
+      run: poetry install --no-interaction --no-ansi
 
     - name: Run linting
       run: |
