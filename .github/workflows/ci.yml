@@ -108,7 +108,7 @@ jobs:
           ssh -v -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
           cd
           sudo chown -R $(whoami):$(whoami) CW_8
-          rm -rf CourseWork_8/
+          rm -rf CW_8/
           git clone git@github.com:eqxtapo/CW_8.git
           cd CW_8
           git fetch --all
