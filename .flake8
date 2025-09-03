@@ -1,0 +1,13 @@
+[flake8]
+max-line-length = 120
+ignore = E501, F401
+exclude =
+    migrations/,
+    .git,
+    __pycache__,
+    .venv,
+    env,
+    venv
+per-file-ignores =
+    */migrations/*:E501
+    */settings.py:E501
