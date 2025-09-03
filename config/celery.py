@@ -9,8 +9,8 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 # Создание экземпляра объекта Celery
 app = Celery("config")
 
-# Загрузка настроек из файла Django
-app.config_from_object("django.conf:settings", namespace="CELERY")
+app.conf.broker_url = 'redis://redis:6379/0'
+app.conf.result_backend = 'redis://redis:6379/0'
 
 # Автоматическое обнаружение и регистрация задач из файлов tasks.py
 app.autodiscover_tasks()
