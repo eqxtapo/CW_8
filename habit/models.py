@@ -54,19 +54,10 @@ class Habit(models.Model):
         **NULLABLE, verbose_name="Время на выполнение (в секундах)"
     )
 
-    owner = models.ForeignKey(
-        AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        verbose_name="Владелец",
-        help_text="Выберите",
-        related_name="habits",
-        null=True,
-        blank=True,
-    )
-
     class Meta:
         verbose_name = "Привычка"
         verbose_name_plural = "Привычки"
+        ordering = ["action"]
 
     def __str__(self):
         return f"{self.action}"

@@ -11,7 +11,9 @@ class HabitTestCase(APITestCase):
 
     def setUp(self):
         self.user = User.objects.create(email="test@mail.com")
-        self.habit = Habit.objects.create(action="прогулка с собакой в 7 утра", user=self.user)
+        self.habit = Habit.objects.create(
+            action="прогулка с собакой в 7 утра", user=self.user
+        )
         self.client.force_authenticate(user=self.user)
 
     def test_habit_retrieve(self):
@@ -89,9 +91,7 @@ class HabitTestCase(APITestCase):
     def test_habit_list_published(self):
         """Список опубликованных привычек"""
         url = reverse("habit:published")
-        not_published_habit = Habit.objects.create(
-            action="почистить зубы в 9 вечера", user=self.user, is_published=False
-        )
+
         response = self.client.get(url)
         data = response.json()
         print(data)
